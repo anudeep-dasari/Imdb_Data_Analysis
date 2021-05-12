@@ -84,7 +84,7 @@ for i in range(1,1500,50):
 		try:
 			director_c = container.findAll("p",{"class":""})
 			director_container = director_c[0]
-			dir_act = director_container.text.replace('\n',' ')
+			dir_act = director_container.text.replace('\n','-')
 		except:
 			dir_act = "NA"
 
