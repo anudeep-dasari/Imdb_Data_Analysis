@@ -4,18 +4,19 @@
 from urllib.request import urlopen 
 from bs4 import BeautifulSoup as Soup
 
+
 #create a csv file to store data
 filename = "imdb_action_data.csv"
 f = open(filename,"w")
 
 #titles for the respective columns retrived
-headers = "Title,Directors and Actors,Release,Certificate,Runtime,Genre,Rating,Metascore,Summary,Gross\n"
+headers = "Title,Directors and Actors,Release,Certificate,Runtime,Genre,Rating,Metascore,Summary,Votes,Gross\n"
 
 f.write(headers)
 
 #loop through the pages on the site
 for i in range(1,1500,50):
-	url = "https://www.imdb.com/search/title/?title_type=feature&genres=action&sort=boxoffice_gross_us,desc&start={}&explore=genres&ref_=adv_nxt".format(i)
+	url = "https://www.imdb.com/search/title/?title_type=feature&num_votes=10000,&countries=us&sort=user_rating,desc&start={}&ref_=adv_nxt".format(i)
 	uClient = urlopen(url)
 	page_html = uClient.read()
 	uClient.close()
@@ -76,6 +77,12 @@ for i in range(1,1500,50):
 			summary = "NA"
 		
 		try:
+			votes_c = container.findAll("span",{"name":"nv"})
+			votes = votes_c[0].text
+		except:
+			votes = "NA"
+
+		try:
 			gross_c = container.findAll("span",{"name":"nv"})
 			gross = gross_c[1].text
 		except:
@@ -97,10 +104,11 @@ for i in range(1,1500,50):
 		print("rating: "+rating)
 		print("Metascore: "+Metascore)
 		print("summary: "+summary)
+		print("votes: "+votes)
 		print("gross: "+gross)
 
         #write the retrived data to csv file
-		f.write(title.replace(",","")+","+dir_act.replace(",","")+","+release+","+certificate.replace(",","")+","+runtime + ","+genre.replace(",","")+","+rating+","+Metascore+","+summary.replace(",","")+","+gross.replace(",","")+"\n")
+		f.write(title.replace(",","")+","+dir_act.replace(",","")+","+release+","+certificate.replace(",","")+","+runtime + ","+genre.replace(",","")+","+rating+","+Metascore+","+summary.replace(",","")+","+votes.replace(",","")+","+gross.replace(",","")+"\n")
 		
 f.close()
 
